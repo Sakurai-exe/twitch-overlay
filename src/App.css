@@ -115,11 +115,10 @@ body {
 
 .message {
     padding: 4px 8px;
-    font-size: 13px;
+    font-size: inherit;
     line-height: 1.4;
     word-break: break-word;
 }
-
 .username {
     font-weight: 700;
     margin-right: 6px;
@@ -127,4 +126,41 @@ body {
 
 .text {
     color: rgba(255, 255, 255, 0.9);
+}
+
+.scroll-to-bottom {
+    position: sticky;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(145, 71, 255, 0.9);
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+}
+
+.settings {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.settings input[type="range"] {
+    -webkit-app-region: no-drag;
+    accent-color: #9147ff;
 }
