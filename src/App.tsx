@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 interface Message {
   id: string;
@@ -15,9 +16,30 @@ function App() {
   const wsRef = useRef<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const handleDrag = (e: React.MouseEvent) => {
+    if (e.buttons === 1) {
+      getCurrentWindow().startDragging();
+    }
+  };
+
+  //когда мышь над сообщениями, клики работают, когда уходит за край — проваливаются сквозь:
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const win = getCurrentWindow();
+    const handleMouseLeave = () => win.setIgnoreCursorEvents(true);
+    const handleMouseEnter = () => win.setIgnoreCursorEvents(false);
+
+    document.addEventListener("mouseleave", handleMouseLeave);
+    document.addEventListener("mouseenter", handleMouseEnter);
+
+    return () => {
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("mouseenter", handleMouseEnter);
+    };
+  }, []);
 
   const connect = () => {
     if (!channel.trim()) return;
@@ -77,7 +99,7 @@ function App() {
   return (
     <div className="app">
       {!connected ? (
-        <div className="connect-screen">
+        <div className="connect-screen" onMouseDown={handleDrag}>
           <h2>Twitch Chat</h2>
           <input
             type="text"
@@ -90,7 +112,7 @@ function App() {
         </div>
       ) : (
         <div className="chat-screen">
-          <div className="chat-header">
+          <div className="chat-header" onMouseDown={handleDrag}>
             <span>#{channel}</span>
             <button onClick={disconnect}>✕</button>
           </div>
