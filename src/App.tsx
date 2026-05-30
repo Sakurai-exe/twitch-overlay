@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 
 interface Message {
   id: string;
@@ -23,7 +22,7 @@ function App() {
 
   const handleDrag = (e: React.MouseEvent) => {
     if (e.buttons === 1) {
-      getCurrentWindow().startDragging();
+      // getCurrentWindow().startDragging();
     }
   };
 
@@ -96,19 +95,19 @@ function App() {
   }, [messages, autoScroll]);
 
   //когда мышь над сообщениями, клики работают, когда уходит за край — проваливаются сквозь:
-  useEffect(() => {
-    const win = getCurrentWindow();
-    const handleMouseLeave = () => win.setIgnoreCursorEvents(true);
-    const handleMouseEnter = () => win.setIgnoreCursorEvents(false);
+  // useEffect(() => {
+  //   const win = getCurrentWindow();
+  //   const handleMouseLeave = () => win.setIgnoreCursorEvents(true);
+  //   const handleMouseEnter = () => win.setIgnoreCursorEvents(false);
 
-    document.addEventListener("mouseleave", handleMouseLeave);
-    document.addEventListener("mouseenter", handleMouseEnter);
+  //   document.addEventListener("mouseleave", handleMouseLeave);
+  //   document.addEventListener("mouseenter", handleMouseEnter);
 
-    return () => {
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      document.removeEventListener("mouseenter", handleMouseEnter);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("mouseleave", handleMouseLeave);
+  //     document.removeEventListener("mouseenter", handleMouseEnter);
+  //   };
+  // }, []);
 
   return (
     <div className="app">
