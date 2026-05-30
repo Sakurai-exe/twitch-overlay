@@ -15,6 +15,8 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [autoScroll, setAutoScroll] = useState(true);
+  const messagesRef = useRef<HTMLDivElement>(null);
 
   const handleDrag = (e: React.MouseEvent) => {
     if (e.buttons === 1) {
@@ -22,24 +24,12 @@ function App() {
     }
   };
 
-  //когда мышь над сообщениями, клики работают, когда уходит за край — проваливаются сквозь:
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  useEffect(() => {
-    const win = getCurrentWindow();
-    const handleMouseLeave = () => win.setIgnoreCursorEvents(true);
-    const handleMouseEnter = () => win.setIgnoreCursorEvents(false);
-
-    document.addEventListener("mouseleave", handleMouseLeave);
-    document.addEventListener("mouseenter", handleMouseEnter);
-
-    return () => {
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      document.removeEventListener("mouseenter", handleMouseEnter);
-    };
-  }, []);
+  const handleScroll = () => {
+    const el = messagesRef.current;
+    if (!el) return;
+    const isAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 50;
+    setAutoScroll(isAtBottom);
+  };
 
   const connect = () => {
     if (!channel.trim()) return;
@@ -96,6 +86,27 @@ function App() {
     setMessages([]);
   };
 
+  useEffect(() => {
+    if (autoScroll) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, autoScroll]);
+
+  //когда мышь над сообщениями, клики работают, когда уходит за край — проваливаются сквозь:
+  useEffect(() => {
+    const win = getCurrentWindow();
+    const handleMouseLeave = () => win.setIgnoreCursorEvents(true);
+    const handleMouseEnter = () => win.setIgnoreCursorEvents(false);
+
+    document.addEventListener("mouseleave", handleMouseLeave);
+    document.addEventListener("mouseenter", handleMouseEnter);
+
+    return () => {
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("mouseenter", handleMouseEnter);
+    };
+  }, []);
+
   return (
     <div className="app">
       {!connected ? (
@@ -116,7 +127,7 @@ function App() {
             <span>#{channel}</span>
             <button onClick={disconnect}>✕</button>
           </div>
-          <div className="messages">
+          <div className="messages" ref={messagesRef} onScroll={handleScroll}>
             {messages.map((msg) => (
               <div key={msg.id} className="message">
                 <span className="username" style={{ color: msg.color }}>
@@ -126,6 +137,19 @@ function App() {
               </div>
             ))}
             <div ref={messagesEndRef} />
+            {!autoScroll && (
+              <button
+                className="scroll-to-bottom"
+                onClick={() => {
+                  setAutoScroll(true);
+                  messagesEndRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                ↓ новые сообщения
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -128,3 +128,18 @@ body {
 .text {
     color: rgba(255, 255, 255, 0.9);
 }
+
+.scroll-to-bottom {
+    position: sticky;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(145, 71, 255, 0.9);
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+}
