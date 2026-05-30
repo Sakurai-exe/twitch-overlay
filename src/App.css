@@ -115,11 +115,10 @@ body {
 
 .message {
     padding: 4px 8px;
-    font-size: 13px;
+    font-size: inherit;
     line-height: 1.4;
     word-break: break-word;
 }
-
 .username {
     font-weight: 700;
     margin-right: 6px;
