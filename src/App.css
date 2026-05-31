@@ -136,6 +136,25 @@ body {
     flex: 1;
     overflow-y: auto;
     padding: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(145, 71, 255, 0.5) transparent;
+}
+
+.messages::-webkit-scrollbar {
+    width: 4px;
+}
+
+.messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.messages::-webkit-scrollbar-thumb {
+    background: rgba(145, 71, 255, 0.5);
+    border-radius: 2px;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(145, 71, 255, 0.8);
 }
 
 .message {
