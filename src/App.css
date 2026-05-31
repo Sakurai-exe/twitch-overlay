@@ -124,6 +124,12 @@ body {
     margin-right: 3px;
 }
 
+.emote {
+    height: 28px;
+    vertical-align: middle;
+    margin: 0 2px;
+}
+
 .username {
     font-weight: 700;
     margin-right: 6px;
