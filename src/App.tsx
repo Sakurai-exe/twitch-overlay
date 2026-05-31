@@ -384,6 +384,10 @@ function App() {
         >
           <div className="chat-header" onMouseDown={handleDragMouseDown}>
             <span>Twitch Chat Overlay</span>
+            <span className="hotkey-hint">
+              <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>G</kbd>
+              <span className="hotkey-hint-label">toggle click-through</span>
+            </span>
             <div style={{ display: "flex", gap: "8px" }}>
               <button
                 onMouseDown={(e) => e.stopPropagation()}

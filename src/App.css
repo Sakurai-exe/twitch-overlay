@@ -94,6 +94,31 @@ body {
     cursor: grab;
 }
 
+.hotkey-hint {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0;
+    user-select: none;
+}
+
+.hotkey-hint-label {
+    margin-left: 4px;
+}
+
+.hotkey-hint kbd {
+    font-family: inherit;
+    font-size: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+    padding: 1px 4px;
+    color: rgba(255, 255, 255, 0.35);
+}
+
 .chat-header button {
     background: none;
     border: none;
