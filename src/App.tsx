@@ -1,6 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
+declare global {
+  interface Window {
+    electronAPI?: {
+      mouseMove: (delta: { x: number; y: number }) => void;
+      closeApp: () => void;
+    };
+  }
+}
+
 interface Message {
   id: string;
   username: string;
@@ -20,10 +29,26 @@ function App() {
   const [opacity, setOpacity] = useState(0.75);
   const [fontSize, setFontSize] = useState(13);
 
-  const handleDrag = (e: React.MouseEvent) => {
-    if (e.buttons === 1) {
-      // getCurrentWindow().startDragging();
-    }
+  const handleDragMouseDown = (e: React.MouseEvent) => {
+    let lastX = e.screenX;
+    let lastY = e.screenY;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      window.electronAPI?.mouseMove({
+        x: e.screenX - lastX,
+        y: e.screenY - lastY,
+      });
+      lastX = e.screenX;
+      lastY = e.screenY;
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
   const handleScroll = () => {
@@ -35,7 +60,6 @@ function App() {
 
   const connect = () => {
     if (!channel.trim()) return;
-
     const ws = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
     wsRef.current = ws;
 
@@ -56,7 +80,6 @@ function App() {
         }
         if (!line.includes("PRIVMSG")) return;
 
-        // парсим теги
         const tagMatch = line.match(/^@([^ ]+)/);
         const tags: Record<string, string> = {};
         if (tagMatch) {
@@ -94,45 +117,57 @@ function App() {
     }
   }, [messages, autoScroll]);
 
-  //когда мышь над сообщениями, клики работают, когда уходит за край — проваливаются сквозь:
-  // useEffect(() => {
-  //   const win = getCurrentWindow();
-  //   const handleMouseLeave = () => win.setIgnoreCursorEvents(true);
-  //   const handleMouseEnter = () => win.setIgnoreCursorEvents(false);
-
-  //   document.addEventListener("mouseleave", handleMouseLeave);
-  //   document.addEventListener("mouseenter", handleMouseEnter);
-
-  //   return () => {
-  //     document.removeEventListener("mouseleave", handleMouseLeave);
-  //     document.removeEventListener("mouseenter", handleMouseEnter);
-  //   };
-  // }, []);
-
   return (
     <div className="app">
       {!connected ? (
-        <div className="connect-screen" onMouseDown={handleDrag}>
-          <h2>Twitch Chat</h2>
+        <div className="connect-screen" onMouseDown={handleDragMouseDown}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h2>Chat Overlay</h2>
+            <button
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={() => window.electronAPI?.closeApp()}
+            >
+              ✕
+            </button>
+          </div>
           <input
             type="text"
             placeholder="Название канала..."
             value={channel}
             onChange={(e) => setChannel(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && connect()}
+            onMouseDown={(e) => e.stopPropagation()}
           />
-          <button onClick={connect}>Подключиться</button>
+          <button onMouseDown={(e) => e.stopPropagation()} onClick={connect}>
+            Подключиться
+          </button>
         </div>
       ) : (
         <div
           className="chat-screen"
           style={{ background: `rgba(0, 0, 0, ${opacity})` }}
         >
-          <div className="chat-header" onMouseDown={handleDrag}>
+          <div className="chat-header" onMouseDown={handleDragMouseDown}>
             <span>#{channel}</span>
             <div style={{ display: "flex", gap: "8px" }}>
-              <button onClick={() => setShowSettings(!showSettings)}>⚙️</button>
-              <button onClick={disconnect}>✕</button>
+              <button
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={() => setShowSettings(!showSettings)}
+              >
+                ⚙️
+              </button>
+              <button
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={disconnect}
+              >
+                ✕
+              </button>
             </div>
           </div>
           {showSettings && (
@@ -146,6 +181,7 @@ function App() {
                   step="0.05"
                   value={opacity}
                   onChange={(e) => setOpacity(Number(e.target.value))}
+                  onMouseDown={(e) => e.stopPropagation()}
                 />
               </label>
               <label>
@@ -157,6 +193,7 @@ function App() {
                   step="1"
                   value={fontSize}
                   onChange={(e) => setFontSize(Number(e.target.value))}
+                  onMouseDown={(e) => e.stopPropagation()}
                 />
               </label>
             </div>
@@ -179,6 +216,7 @@ function App() {
             {!autoScroll && (
               <button
                 className="scroll-to-bottom"
+                onMouseDown={(e) => e.stopPropagation()}
                 onClick={() => {
                   setAutoScroll(true);
                   messagesEndRef.current?.scrollIntoView({
