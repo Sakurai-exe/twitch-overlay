@@ -237,6 +237,7 @@ function App() {
   const [badgeMap, setBadgeMap] = useState<BadgeMap>({});
   const [customEmotes, setCustomEmotes] = useState<CustomEmoteMap>({});
   const customEmotesLoadedRef = useRef(false);
+  const isProgrammaticScroll = useRef(false);
 
   const handleDragMouseDown = (e: React.MouseEvent) => {
     let lastX = e.screenX;
@@ -258,6 +259,7 @@ function App() {
   };
 
   const handleScroll = () => {
+    if (isProgrammaticScroll.current) return;
     const el = messagesRef.current;
     if (!el) return;
     setAutoScroll(el.scrollHeight - el.scrollTop - el.clientHeight < 50);
@@ -318,7 +320,7 @@ function App() {
           });
 
         setMessages((prev) => [
-          ...prev.slice(-100),
+          ...prev.slice(-50),
           {
             id: tags["id"] || Math.random().toString(),
             username: tags["display-name"] || userMatch[1],
@@ -342,8 +344,13 @@ function App() {
   };
 
   useEffect(() => {
-    if (autoScroll)
+    if (autoScroll) {
+      isProgrammaticScroll.current = true;
       messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
+      requestAnimationFrame(() => {
+        isProgrammaticScroll.current = false;
+      });
+    }
   }, [messages, autoScroll]);
 
   return (
@@ -357,7 +364,7 @@ function App() {
               alignItems: "center",
             }}
           >
-            <h2>Twitch Chat Overlay</h2>
+            <h2>Stream Chat Overlay</h2>
             <button
               onMouseDown={(e) => e.stopPropagation()}
               onClick={() => window.electronAPI?.closeApp()}
@@ -383,7 +390,7 @@ function App() {
           style={{ background: `rgba(0, 0, 0, ${opacity})` }}
         >
           <div className="chat-header" onMouseDown={handleDragMouseDown}>
-            <span>Twitch Chat Overlay</span>
+            <span>Stream Chat Overlay</span>
             <span className="hotkey-hint">
               <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>G</kbd>
               <span className="hotkey-hint-label">toggle click-through</span>
