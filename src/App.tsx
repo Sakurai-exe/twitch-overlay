@@ -343,7 +343,7 @@ function App() {
 
   useEffect(() => {
     if (autoScroll)
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
   }, [messages, autoScroll]);
 
   return (
