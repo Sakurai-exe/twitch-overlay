@@ -117,6 +117,13 @@ body {
     word-break: break-word;
 }
 
+.badge {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
 .username {
     font-weight: 700;
     margin-right: 6px;
@@ -159,4 +166,35 @@ body {
 
 .settings input[type="range"] {
     accent-color: #9147ff;
+}
+
+.settings-text {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 6px 8px;
+    color: white;
+    font-size: 11px;
+    outline: none;
+    width: 100%;
+    margin-top: 2px;
+}
+
+.settings-text:focus {
+    border-color: #9147ff;
+}
+
+.settings-btn {
+    background: #9147ff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+.settings-btn:hover {
+    background: #7d3be8;
 }
