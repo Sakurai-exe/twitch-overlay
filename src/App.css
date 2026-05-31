@@ -16,8 +16,11 @@ body,
 
 body {
     background: transparent;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Inter", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
     color: white;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 .app {
